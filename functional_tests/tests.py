@@ -33,6 +33,7 @@ class NewVisitorTest(LiveServerTestCase):
 				
 		list_url=self.browser.current_url
 		self.assertRegex(list_url,'lists/.+')
+		first_user_url = self.browser.current_url
 		self.check_for_row_in_table('1: Buy peacock feathers')
 		
 		#You can input another item from the list url
@@ -47,6 +48,50 @@ class NewVisitorTest(LiveServerTestCase):
 		#check all in the right place
 		self.check_for_row_in_table('1: Buy peacock feathers')
 		self.check_for_row_in_table('2: Buy more peacock feathers')
+		
+		#close the browser and go away
+		self.browser.quit()
+		
+		#somebody else comes along
+		self.browser=webdriver.Firefox()
+		
+		#go home page.  no sign of previous list
+		self.browser.get(self.live_server_url)
+		page_text=self.browser.find_element_by_tag_name('body').text
+		self.assertNotIn('peacock',page_text)
+		
+		#put in new stuff
+		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox.send_keys('buy milk')
+		inputbox.send_keys(Keys.ENTER)
+
+		#redirect to a list url				
+		list_url=self.browser.current_url
+		self.assertRegex(list_url,'lists/.+')
+		self.check_for_row_in_table('1: buy milk')
+		
+		#You can input another item from the list url
+		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox.send_keys('get beer')
+		inputbox.send_keys(Keys.ENTER)
+		
+		#go to the list url
+		list_url=self.browser.current_url
+		self.assertRegex(list_url,'lists/.+')
+		
+		#make sure the url second bit is not the same as first user
+		second_user_url = self.browser.current_url
+		assertNotEqual(second_user_url, first_user_url)
+	
+		#check all in the right place
+		self.check_for_row_in_table('1: buy milk')
+		self.check_for_row_in_table('2: get beer')
+		
+		#and old list still not there
+		page_text=self.browser.find_element_by_tag_name('body').text
+		self.assertNotIn('peacock',page_text)
+
+		
 		self.fail('Finish the test')
 		
 if __name__=='__main__':

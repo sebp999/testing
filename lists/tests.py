@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
-from lists.views import home_page
+from lists.views import home_page, view_list
 from django.template.loader import render_to_string
 from lists.models import Item
 
@@ -59,7 +59,7 @@ class HomePageTest(TestCase):
 		response=home_page(request)
 		
 		self.assertEqual(response.status_code,302)
-		self.assertEqual(response['location'],'/')
+		self.assertEqual(response['location'],'/lists/theonlyoneintheworld')
 		
 	def test_home_page_doesnt_add_unless_post(self):
 		request=HttpRequest()
@@ -69,12 +69,16 @@ class HomePageTest(TestCase):
 		
 		self.assertEqual(Item.objects.count(),0)
 		
-	def test_home_page_shows_all_items(self):
+class ListViewTest(TestCase):
+	def test_displays_all_items(self):
 		Item.objects.create(text='item1')
 		Item.objects.create(text='item2')
 		request=HttpRequest()
-		response=home_page(request)
+		response=view_list(request)
 		self.assertIn('item1',response.content.decode())
 		self.assertIn('item2',response.content.decode())
 		
-	
+	def test_uses_list_template(self):
+		response=self.client.get('/lists/theonlyoneintheworld/')
+		self.assertTemplateUsed(response,'list.html')
+		
