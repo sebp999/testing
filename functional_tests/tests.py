@@ -81,7 +81,7 @@ class NewVisitorTest(LiveServerTestCase):
 		
 		#make sure the url second bit is not the same as first user
 		second_user_url = self.browser.current_url
-		assertNotEqual(second_user_url, first_user_url)
+		self.assertNotEqual(second_user_url, first_user_url)
 	
 		#check all in the right place
 		self.check_for_row_in_table('1: buy milk')
@@ -91,8 +91,6 @@ class NewVisitorTest(LiveServerTestCase):
 		page_text=self.browser.find_element_by_tag_name('body').text
 		self.assertNotIn('peacock',page_text)
 
-		
-		self.fail('Finish the test')
 		
 if __name__=='__main__':
 	unittest.main(warnings='ignore')
