@@ -10,8 +10,8 @@ class ItemValidationTest(FunctionalTest):
 		inputbox.send_keys(Keys.ENTER)
 		
 		#Home page refreshes. Message saying that list items cant be blank.
-		errormessage=self.browser.find_element_by_css_selector('.has_error')
-		self.assertEqual("You can't have empty item", errormessage.text)
+		errormessage=self.browser.find_element_by_css_selector('.has-error')
+		self.assertEqual("You can't have an empty list item", errormessage.text)
 
 		#Try again, with a thing there.
 		inputbox=self.browser.find_element_by_id('id_new_item')
@@ -19,9 +19,12 @@ class ItemValidationTest(FunctionalTest):
 		inputbox.send_keys(Keys.ENTER)
 		
 		#There shouldn't be an error
-		errormessage=self.browser.find_element_by_css_selector('.has_error')
-		if errormessage:
-			self.fail('Should not be an error message')
+		try:
+			errormessage=self.browser.find_element_by_css_selector('.has-error')
+			if errormessage:
+				self.fail('Should not be an error message')
+		except: #no error message
+			pass
 		
 		#It should work and be in the list
 		self.check_for_row_in_table('1: thing')
