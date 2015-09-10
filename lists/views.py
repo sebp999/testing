@@ -28,7 +28,6 @@ def view_list(request, list_id):
 			i.save()
 			return redirect('/lists/%d/' % (list_.id,))
 		except ValidationError:
-			print ("caught the VE")
 			error= "You can't have an empty list item"
 	return render(request, 'list.html', {'list': list_, 'error': error}) 
 
