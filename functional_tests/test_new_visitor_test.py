@@ -6,7 +6,7 @@ class NewVisitorTest(FunctionalTest):
 	def test_can_start_a_list_and_retrieve_it_later(self) :
 		self.browser.get(self.server_url)
 		self.assertIn('To-do', self.browser.title)
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()
 		header_text=self.browser.find_element_by_tag_name('h1').text
 		self.assertIn('to-do', header_text)
 		self.assertEqual(
@@ -23,7 +23,7 @@ class NewVisitorTest(FunctionalTest):
 		self.check_for_row_in_table('1: Buy peacock feathers')
 		
 		#You can input another item from the list url
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()		
 		inputbox.send_keys('Buy more peacock feathers')
 		inputbox.send_keys(Keys.ENTER)
 		
@@ -47,7 +47,7 @@ class NewVisitorTest(FunctionalTest):
 		self.assertNotIn('peacock',page_text)
 		
 		#put in new stuff
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()
 		inputbox.send_keys('buy milk')
 		inputbox.send_keys(Keys.ENTER)
 
@@ -57,7 +57,7 @@ class NewVisitorTest(FunctionalTest):
 		self.check_for_row_in_table('1: buy milk')
 		
 		#You can input another item from the list url
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()
 		inputbox.send_keys('get beer')
 		inputbox.send_keys(Keys.ENTER)
 		

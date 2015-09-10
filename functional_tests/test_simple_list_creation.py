@@ -6,7 +6,7 @@ class ItemValidationTest(FunctionalTest):
 	def test_cannot_add_empty_list_items(self):
 		#Try to submit empty item. Hit enter.
 		self.browser.get(self.server_url)
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()
 		inputbox.send_keys(Keys.ENTER)
 		
 		#Home page refreshes. Message saying that list items cant be blank.
@@ -14,7 +14,7 @@ class ItemValidationTest(FunctionalTest):
 		self.assertEqual("You can't have an empty list item", errormessage.text)
 
 		#Try again, with a thing there.
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()
 		inputbox.send_keys("thing")
 		inputbox.send_keys(Keys.ENTER)
 		
@@ -30,7 +30,7 @@ class ItemValidationTest(FunctionalTest):
 		self.check_for_row_in_table('1: thing')
 		
 		#Tries another blank item
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()
 		inputbox.send_keys(Keys.ENTER)
 		
 		#Similar warnings
@@ -38,7 +38,8 @@ class ItemValidationTest(FunctionalTest):
 		self.assertEqual("You can't have an empty list item", errormessage.text)
 		
 		#Correct it by filling in text.
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()
+		#browser.find_element_by_id('id_new_item')
 		inputbox.send_keys("other thing")
 		inputbox.send_keys(Keys.ENTER)
 		
