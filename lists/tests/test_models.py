@@ -3,38 +3,21 @@ from django.core.exceptions import ValidationError
 
 from lists.models import Item, List
 
-# Create your tests here.
+# Maybe these should be split out to ListTest and ItemTest see p 217.
 
 class ListAndItemModelTest(TestCase):
-	def test_saving_and_retrieving_items(self):
-		alist=List()
-		alist.save()
-		
-		first_item=Item()
-		first_item.text='The first item'
-		first_item.list=alist
-		first_item.save()
-		
-		second_item=Item()
-		second_item.text='The second item'
-		second_item.list=alist
-		second_item.save()
-		
-		saved_list=List.objects.first()
-		self.assertEqual(saved_list, alist)
-		
-		saved_items = Item.objects.all()
-		self.assertEqual(saved_items.count(), 2)
-		
-		first_saved_item = saved_items[0]
-		second_saved_item = saved_items[1]
-		
-		self.assertEqual(first_saved_item.text, 'The first item')
-		self.assertEqual(first_saved_item.list, alist)
-		
-		self.assertEqual(second_saved_item.text, 'The second item')
-		self.assertEqual(second_saved_item.list, alist)
-		
+
+	def test_default_text(self):
+		item=Item()
+		self.assertEqual(item.text, '')
+
+	def test_item_is_related_to_list(self):
+		alist=List.objects.create()
+		item=Item()
+		item.list=alist
+		item.save()
+		self.assertIn(item, alist.item_set.all())
+	
 	def test_cannot_save_empty_items(self):
 		alist=List.objects.create()
 		item=Item(list=alist, text='')
@@ -46,3 +29,28 @@ class ListAndItemModelTest(TestCase):
 		alist=List.objects.create()
 		self.assertEqual(alist.get_absolute_url(), '/lists/%d/' % (alist.id))
 		
+	def test_dupe_items_invalid(self):
+		alist=List.objects.create()
+		Item.objects.create(list=alist,text="bla")
+		item = Item(list=alist,text="bla")
+		with self.assertRaises(ValidationError):
+			item.full_clean()
+		
+	def test_CAN_save_same_item_to_different_lists(self):
+		list1=List.objects.create()
+		list2=List.objects.create()
+		Item.objects.create(list=list1,text="bla")
+		item = Item(list=list2,text="bla")
+		item.full_clean()  ##should not raise exception
+		
+	def test_list_ordering(self):
+		list1=List.objects.create()
+		item1=Item.objects.create(text="one", list=list1)
+		item2=Item.objects.create(text="two", list=list1)
+		item3=Item.objects.create(text="three", list=list1)
+		
+		self.assertEquals(list(Item.objects.all()), [item1, item2, item3])
+		
+	def test_string(self):
+		item=Item(text="some text")
+		self.assertEqual(str(item), "some text")
