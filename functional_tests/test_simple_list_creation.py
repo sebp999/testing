@@ -34,8 +34,8 @@ class ItemValidationTest(FunctionalTest):
 		inputbox.send_keys(Keys.ENTER)
 		
 		#Similar warnings
-		errormessage=self.browser.find_element_by_css_selector('.has_error')
-		self.assertEqual("You can't have empty item", errormessage.text)
+		errormessage=self.browser.find_element_by_css_selector('.has-error')
+		self.assertEqual("You can't have an empty list item", errormessage.text)
 		
 		#Correct it by filling in text.
 		inputbox=self.browser.find_element_by_id('id_new_item')
