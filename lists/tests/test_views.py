@@ -100,7 +100,6 @@ class ListViewTest(TestCase):
 	
 	def test_validation_error_end_up_on_list_view(self):
 		alist=List.objects.create()
-		print("running")
 		response = self.client.post('/lists/%d/' % (alist.id), data={'item_text': ''})
 		self.assertEqual(response.status_code, 200)
 		self.assertTemplateUsed(response,'list.html')
