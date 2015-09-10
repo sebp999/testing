@@ -17,14 +17,12 @@ def new_list(request):
 
 def view_list(request, list_id):
 	list_ = List.objects.get(id=list_id)
-	error=None
+	form = ItemForm()
+	
 	if request.method=='POST':
-		try:
-			i=Item(text=request.POST['text'], list=list_)
-			i.full_clean()
-			i.save()
+		form=ItemForm(data=request.POST)
+		if form.is_valid():
+			Item.objects.create(text=request.POST['text'], list=list_)
 			return redirect(list_)
-		except ValidationError:
-			error= "You can't have an empty list item"
-	return render(request, 'list.html', {'list': list_, 'error': error}) 
+	return render(request, 'list.html', {'list': list_, 'form':form}) 
 

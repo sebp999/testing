@@ -66,6 +66,7 @@ class NewListTest(TestCase):
 	   self.assertEqual(Item.objects.count(), 0)
 
 class ListViewTest(TestCase):
+
 	def test_uses_list_template(self):
 		a_list = List.objects.create()
 		response=self.client.get('/lists/%d/' % (a_list.id))
@@ -118,11 +119,27 @@ class ListViewTest(TestCase):
 		response = self.client.post('/lists/%d/' % (correct_list.id), data={'text':'A new item for existing list'})
 		self.assertRedirects(response, '/lists/%d/' % (correct_list.id))
 	
+	def post_invalid_data(self):
+		a_list = List.objects.create()
+		return self.client.post('/lists/%d/' % (a_list.id), data={'text':''})
+
 	def test_validation_error_end_up_on_list_view(self):
-		alist=List.objects.create()
-		response = self.client.post('/lists/%d/' % (alist.id), data={'text': ''})
+		response = self.post_invalid_data()
 		self.assertEqual(response.status_code, 200)
 		self.assertTemplateUsed(response,'list.html')
+
+	def test_validation_error_nothing_saved_db(self):
+		response = self.post_invalid_data()
+		self.assertEquals(Item.objects.count(), 0)
+	
+	def test_validation_error_correct_message(self):
+		response = self.post_invalid_data()
+	
 		error_message=escape("You can't have an empty list item")
 		self.assertContains(response, error_message)
 
+	def test_display_item_form_on_GET(self):
+		alist=List.objects.create()
+		response = self.client.get('/lists/%d/' % (alist.id))
+		self.assertIsInstance(response.context['form'], ItemForm)
+		

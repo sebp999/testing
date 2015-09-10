@@ -10,6 +10,6 @@ class LayoutAndStylingTest(FunctionalTest):
 		self.assertAlmostEqual(inputbox.location['x'] + inputbox.size['width']/2, 512, delta=20)
 		inputbox.send_keys('get beer')
 		inputbox.send_keys(Keys.ENTER)
-		inputbox=self.browser.find_element_by_id('id_new_item')
+		inputbox=self.get_item_input_box()
 		self.assertAlmostEqual(inputbox.location['x'] + inputbox.size['width']/2, 512, delta=20)
 		
